@@ -1,0 +1,30 @@
+{
+  "name": "next-classnames-minifier",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/withClassnamesMinifier.js",
+  "types": "dist/withClassnamesMinifier.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vordgi/next-classnames-minifier.git"
+  },
+  "author": {
+    "name": "Savelyev Alexander",
+    "email": "vordgi1@gmail.com",
+    "url": "https://github.com/vordgi/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "16.11.12",
+    "@types/webpack": "5.28.0",
+    "typescript": "4.5.4"
+  }
+}

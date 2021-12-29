@@ -1,0 +1,8 @@
+# build
+dist
+*.tgz
+
+# dependencies
+node_modules
+yarn.lock
+yarn-error.log
