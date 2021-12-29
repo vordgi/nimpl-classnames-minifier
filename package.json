@@ -1,17 +1,28 @@
 {
   "name": "next-classnames-minifier",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Library for configuring style modules to generate compressed classes",
   "main": "dist/withClassnamesMinifier.js",
   "types": "dist/withClassnamesMinifier.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "start": "ts-node index.ts",
     "build": "tsc"
   },
-  "keywords": [],
+  "keywords": [
+    "next",
+    "next.js",
+    "classname",
+    "class",
+    "minify",
+    "compress",
+    "cut",
+    "css",
+    "sass",
+    "scss",
+    "modules"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/vordgi/next-classnames-minifier.git"
