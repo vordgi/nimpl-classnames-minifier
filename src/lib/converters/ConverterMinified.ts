@@ -1,6 +1,7 @@
 import type { LoaderContext } from 'webpack/types';
+import type ConverterBase from './ConverterBase';
 
-class ClassMinifier {
+class ConverterMinified implements ConverterBase {
   cache: {[resource: string]: {[className: string]: string}} = {};
 
   symbols: string[] = [
@@ -53,4 +54,4 @@ class ClassMinifier {
   }
 };
 
-export default ClassMinifier;
+export default ConverterMinified;

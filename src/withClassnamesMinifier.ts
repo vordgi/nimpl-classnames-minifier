@@ -1,46 +1,34 @@
-import type { Configuration, RuleSetUseItem } from 'webpack/types';
-import ClassnamesMinifier from './ClassnamesMinifier';
+import type { Configuration } from 'webpack/types';
+import type ConverterBase from './lib/converters/ConverterBase';
+import ConverterMinified from './lib/converters/ConverterMinified';
+import ConverterDetailed from './lib/converters/ConverterDetailed';
+import injectConverter from './lib/injectConverter';
 
-let classnamesMinifier: ClassnamesMinifier;
+let classnamesMinifier: ConverterBase;
 
 const withClassnameMinifier = (nextConfig: any = {}) => ({
     ...nextConfig,
-    webpack(config: Configuration, options: any) {
-        if (!classnamesMinifier) {
-            classnamesMinifier = new ClassnamesMinifier();
-        }
-        const oneOfRule = config.module?.rules?.find(
-            (rule) => typeof rule === 'object' && typeof rule.oneOf === 'object'
-        );
+    webpack: (config: Configuration, options: any) => {
+        const { classesConverter = 'minified' } = nextConfig;
 
-        if (oneOfRule && typeof oneOfRule === 'object') {
-            const testCssLoaderWithModules = (loaderObj: RuleSetUseItem) => (
-                typeof loaderObj === 'object' &&
-                loaderObj?.loader?.match('css-loader') &&
-                typeof loaderObj.options === 'object' &&
-                loaderObj.options.modules
-            );
-            const modifyCssLoader = (cssLoaderObj: RuleSetUseItem) => {
-                if (typeof cssLoaderObj === 'object' && typeof cssLoaderObj.options === 'object') {
-                    cssLoaderObj.options.modules.getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
+        if (classesConverter === 'minified' || classesConverter === 'detailed') {
+            if (!classnamesMinifier) {
+                if (classesConverter === 'minified') {
+                    classnamesMinifier = new ConverterMinified();
+                } else {
+                    classnamesMinifier = new ConverterDetailed();
                 }
             }
-            oneOfRule.oneOf?.forEach(rule => {
-                if (Array.isArray(rule.use)) {
-                    rule.use.forEach((loaderObj) => {
-                        if (testCssLoaderWithModules(loaderObj)) {
-                            modifyCssLoader(loaderObj);
-                        }
-                    });
-                }
-            });
+
+            injectConverter(classnamesMinifier, config.module?.rules)
         }
 
         if (typeof nextConfig.webpack === 'function') {
             return nextConfig.webpack(config, options);
         }
+
         return config;
-	},
+	}
 });
 
 export default withClassnameMinifier;
