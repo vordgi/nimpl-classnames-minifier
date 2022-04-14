@@ -1,8 +1,15 @@
 import type { LoaderContext } from 'webpack/types';
 import type ConverterBase from './ConverterBase';
+import fs from 'fs';
+import path from 'path';
+
+const cacheFolderPath = path.join(process.cwd(), '.next/cache/next-classnames-minifier');
+const cacheFilePath = path.join(cacheFolderPath, 'minified.xml');
 
 class ConverterMinified implements ConverterBase {
   cache: {[resource: string]: {[className: string]: string}} = {};
+
+  cacheFile;
 
   symbols: string[] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -17,6 +24,26 @@ class ConverterMinified implements ConverterBase {
   currentLoopLength = 0;
 
   nameMap = [0];
+
+  constructor() {
+    if (!fs.existsSync(cacheFolderPath)) fs.mkdirSync(cacheFolderPath, {recursive: true});
+
+    if (fs.existsSync(cacheFilePath)) {
+      this.cacheFile = fs.createWriteStream(cacheFilePath, {flags: 'a'})
+      const cacheRow = fs.readFileSync(cacheFilePath, {encoding: 'utf-8'});
+      cacheRow.split('\n').forEach(row => {
+        if (!row) return;
+        const matched = row.match(/<resource>(.*)<\/resource><name>(.*)<\/name><class>(.*)<\/class>/);
+        if (!matched) return;
+        const resource = matched[1];
+
+        if (!this.cache[resource]) this.cache[resource] = {};
+        this.cache[resource][matched[2]] = matched[3];
+      });
+    } else {
+      this.cacheFile = fs.createWriteStream(cacheFilePath);
+    }
+  }
 
   getClassName() {
     const symbolsCount = 62;
@@ -49,6 +76,7 @@ class ConverterMinified implements ConverterBase {
 
     const minifiedClassName = this.getClassName();
     currentCache[origName] = minifiedClassName;
+    this.cacheFile.write(`<resource>${resourcePath}</resource><name>${origName}</name><class>${minifiedClassName}</class>\n`);
     this.lastIndex += 1;
     return minifiedClassName;
   }
