@@ -35,10 +35,19 @@ class ConverterMinified implements ConverterBase {
         if (!row) return;
         const matched = row.match(/<resource>(.*)<\/resource><name>(.*)<\/name><class>(.*)<\/class>/);
         if (!matched) return;
-        const resource = matched[1];
+        const [_match, resource, name, className] = matched;
 
         if (!this.cache[resource]) this.cache[resource] = {};
-        this.cache[resource][matched[2]] = matched[3];
+        this.cache[resource][name] = className;
+        
+        const nameMap = className.split('').map((s) => this.symbols.indexOf(s));
+        const lastIndex = nameMap.reduce((acc, cur) => acc + cur, 0);
+        if (lastIndex > this.lastIndex) {
+          this.lastIndex = lastIndex;
+          this.nameMap = nameMap;
+          this.currentLoopLength = nameMap.length - 1;
+          this.nextLoopEndsWith = this.lastIndex < 26 ? 26 : Math.pow(62, this.nameMap.length);
+        }
       });
     } else {
       this.cacheFile = fs.createWriteStream(cacheFilePath);
