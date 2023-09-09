@@ -1,6 +1,6 @@
 {
   "name": "next-classnames-minifier",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Library for configuring style modules to generate compressed classes",
   "main": "dist/withClassnamesMinifier.js",
   "types": "dist/withClassnamesMinifier.d.ts",
