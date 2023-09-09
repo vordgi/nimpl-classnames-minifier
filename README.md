@@ -1,6 +1,6 @@
 # Next classnames minifier
 
-Library for configuring style _(css/scss/sass)_ modules to generate compressed classes
+Library for configuring style _(css/scss/sass)_ modules to generate compressed classes (`.header` -> `.a`, `.nav` -> `.b`, ..., `.footer` -> `.aad`, etc.)
 
 ## Reasons
 *Compressing classes* can reduce the size of the generated html and css by up to *20%*, which will have a positive effect on page rendering and metrics (primarily [FCP](https://web.dev/first-contentful-paint/))
@@ -25,7 +25,7 @@ Create `next.config.js` file in your project and apply the library.
 ```js
 const withClassnamesMinifier = require('next-classnames-minifier').default;
 
-module.exports = withClassnamesMinifier({
+module.exports = withClassnamesMinifier()({
     // next.js config
 });
 ```
@@ -36,7 +36,23 @@ const withClassnamesMinifier = require('next-classnames-minifier').default;
 const withPlugins = require('next-compose-plugins');
 
 module.exports = withPlugins([
-    [withClassnamesMinifier]
+    [withClassnamesMinifier()]
+], nextConfig);
+```
+
+## Configuration
+next-classname-minifier has 3 types of changing classnames:
+
+* minified - the main option. It is highly not recommended to use this option for development mode (_it is too unstable in dev mode_);
+* detailed - can be used for debugging, default for development mode;
+* none — use the default CSS modules option;
+
+You can choose different options for development and production. 
+
+Configuration example:
+```js
+module.exports = withPlugins([
+    [withClassnamesMinifier({ dev: 'none', prod: 'minified' })]
 ], nextConfig);
 ```
 
