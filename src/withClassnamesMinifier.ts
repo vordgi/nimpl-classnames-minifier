@@ -1,50 +1,51 @@
 import type { Configuration } from 'webpack/types';
+import type { Options } from './lib/types/plugin';
 import type ConverterBase from './lib/converters/ConverterBase';
-import { DETAILED, MINIFIED, VALID_MINIFIERS_KEYS } from './lib/constants/minifiers';
+import { CUSTOM, MINIFIED, VALID_MINIFIERS_KEYS } from './lib/constants/minifiers';
 import ConverterMinified from './lib/converters/ConverterMinified';
-import ConverterDetailed from './lib/converters/ConverterDetailed';
-import injectConverter from './lib/injectConverter';
-
-const minifiers = {
-    [MINIFIED]: ConverterMinified,
-    [DETAILED]: ConverterDetailed,
-}
+import ConverterCustom from './lib/converters/ConverterCustom';
+import injectConfig from './lib/injectConfig';
 
 let classnamesMinifier: ConverterBase;
 let infoMessageShown = false;
 
-type Options = {dev?: typeof VALID_MINIFIERS_KEYS[number], prod?: typeof VALID_MINIFIERS_KEYS[number]};
-
 const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any = {}) => ({
     ...nextConfig,
     webpack: (config: Configuration, options: any) => {
-        const { dev = 'detailed', prod = 'minified' } = pluginOptions;
+        const { dev = 'none', prod = 'minified' } = pluginOptions;
         const isProd = process.env.NODE_ENV === 'production';
-        const minifierType = isProd ? prod : dev;
-        const isDisabled = minifierType === 'none';
+        const minifierConfig = isProd ? prod : dev;
+        const minifierType = typeof minifierConfig === 'string' ? minifierConfig : minifierConfig.type;
 
         if (!infoMessageShown) {
-            if (!VALID_MINIFIERS_KEYS.includes(prod)) {
-                console.log(`next-classnames-minifier. Invalid key for prod env: ${dev}, valid keys are: ${VALID_MINIFIERS_KEYS.join(', ')}`);
+            if (!VALID_MINIFIERS_KEYS.includes(minifierType)) {
+                console.log(`next-classnames-minifier. Invalid key for target env: ${minifierType}, valid keys are: ${VALID_MINIFIERS_KEYS.join(', ')}`);
                 process.kill(0);
                 process.exit();
-            }
-            if (!VALID_MINIFIERS_KEYS.includes(dev)) {
-                console.log(`next-classnames-minifier. Invalid key for dev env: ${dev}, valid keys are: ${VALID_MINIFIERS_KEYS.join(', ')}`);
-                process.kill(0);
-                process.exit();
-            } else if (dev === 'minified') {
+            } else if (!isProd && minifierType === MINIFIED) {
                 console.log(`next-classnames-minifier. Do not use "minified" variant for dev mode. It's to unstable, use "detailed" or "none" instead`);
+            } else if (minifierType === 'custom' && (typeof minifierConfig !== 'object' || !minifierConfig.templateString)) {
+                console.log(`next-classnames-minifier. Add templateString for custom minifier`);
+                process.kill(0);
+                process.exit();
             }
             infoMessageShown = true;
         }
 
-        if (!isDisabled && minifierType in minifiers) {
+        if (minifierType === MINIFIED) {
             if (!classnamesMinifier) {
-                classnamesMinifier = new minifiers[minifierType as keyof typeof minifiers]();
+                classnamesMinifier = new ConverterMinified();
             }
 
-            injectConverter(classnamesMinifier, config.module?.rules);
+            const getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
+            injectConfig({ getLocalIdent }, config.module?.rules);
+        } else if (minifierType === CUSTOM && typeof minifierConfig === 'object' && minifierConfig.templateString) {
+            if (!classnamesMinifier) {
+                classnamesMinifier = new ConverterCustom();
+            }
+
+            const getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
+            injectConfig({ localIdentName: minifierConfig.templateString, getLocalIdent }, config.module?.rules);
         }
 
         if (typeof nextConfig.webpack === 'function') {

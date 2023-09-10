@@ -43,9 +43,9 @@ module.exports = withPlugins([
 ## Configuration
 next-classname-minifier has 3 types of changing classnames:
 
-* minified - the main option. It is highly not recommended to use this option for development mode (_it is too unstable in dev mode_);
-* detailed - can be used for debugging, default for development mode;
-* none — use the default CSS modules option;
+* minified — the main option. It is highly not recommended to use this option for development mode (_it is too unstable in dev mode_);
+* custom — create a class using a [template string](https://webpack.js.org/configuration/output/#template-strings) rule, can be used for debugging;
+* none — use the default CSS modules option, default for development mode;
 
 You can choose different options for development and production. 
 
@@ -53,6 +53,13 @@ Configuration example:
 ```js
 module.exports = withPlugins([
     [withClassnamesMinifier({ dev: 'none', prod: 'minified' })]
+], nextConfig);
+```
+
+Custom mode example:
+```js
+module.exports = withPlugins([
+    [withClassnamesMinifier({ { type: 'custom', templateString: '[path][name]__[local]_[hash:base64:5]' }, prod: 'minified' })]
 ], nextConfig);
 ```
 
