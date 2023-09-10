@@ -69,7 +69,7 @@ module.exports = withPlugins([
 
 The main problem is the next.js caching system. It may create the "Home" page first and cache it with classes `.a`, `.b`, `.c`, etc.
 
-Next time Next.js will create the "About" page first and those classes will be created for that page, but "Home" page with the same classes will be read from the page.
+Next time Next.js will create the "About" page first and those classes will be created for that page, but "Home" page with the same classes will be read from the cache.
 
 The best way to fix this is to not reuse the next.js cache (_don't cache `.next` folder_). Instructions for Vercel can be found at [vercel doc page](https://vercel.com/docs/deployments/troubleshoot-a-build#managing-build-cache).
 
