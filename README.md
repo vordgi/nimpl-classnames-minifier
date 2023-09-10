@@ -1,5 +1,7 @@
 # Next classnames minifier
 
+[![npm version](https://badge.fury.io/js/next-classnames-minifier.svg)](https://badge.fury.io/js/next-classnames-minifier)
+
 Library for configuring style _(css/scss/sass)_ modules to generate compressed classes (`.header` -> `.a`, `.nav` -> `.b`, ..., `.footer` -> `.aad`, etc.)
 
 ## Reasons
@@ -62,6 +64,14 @@ module.exports = withPlugins([
     [withClassnamesMinifier({ dev: { type: 'custom', templateString: '[path][name]__[local]_[hash:base64:5]' }, prod: 'minified' })]
 ], nextConfig);
 ```
+
+## Troubleshoot
+
+The main problem is the next.js caching system. It may create the "Home" page first and cache it with classes `.a`, `.b`, `.c`, etc.
+
+Next time Next.js will create the "About" page first and those classes will be created for that page, but "Home" page with the same classes will be read from the page.
+
+The best way to fix this is to not reuse the next.js cache (_don't cache `.next` folder_). Instructions for Vercel can be found at [vercel doc page](https://vercel.com/docs/deployments/troubleshoot-a-build#managing-build-cache).
 
 ## License
 
