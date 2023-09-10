@@ -6,7 +6,7 @@ import ConverterMinified from './lib/converters/ConverterMinified';
 import ConverterCustom from './lib/converters/ConverterCustom';
 import injectConfig from './lib/injectConfig';
 
-let classnamesMinifier: ConverterBase;
+let getLocalIdent: ConverterBase['getLocalIdent'];
 let infoMessageShown = false;
 
 const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any = {}) => ({
@@ -33,18 +33,18 @@ const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any 
         }
 
         if (minifierType === MINIFIED) {
-            if (!classnamesMinifier) {
-                classnamesMinifier = new ConverterMinified();
+            if (!getLocalIdent) {
+                const classnamesMinifier = new ConverterMinified();
+                getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
             }
 
-            const getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
             injectConfig({ getLocalIdent }, config.module?.rules);
         } else if (minifierType === CUSTOM && typeof minifierConfig === 'object' && minifierConfig.templateString) {
-            if (!classnamesMinifier) {
-                classnamesMinifier = new ConverterCustom();
+            if (!getLocalIdent) {
+                const classnamesMinifier = new ConverterCustom();
+                getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
             }
 
-            const getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
             injectConfig({ localIdentName: minifierConfig.templateString, getLocalIdent }, config.module?.rules);
         }
 
