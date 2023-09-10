@@ -2,7 +2,7 @@ import type { LoaderContext } from 'webpack/types';
 import type ConverterBase from './ConverterBase';
 
 class ConverterMinified implements ConverterBase {
-  cache: {[resource: string]: {[className: string]: string}} = {};
+  cache: { [resource: string]: { [className: string]: string } } = {};
 
   symbols: string[] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',

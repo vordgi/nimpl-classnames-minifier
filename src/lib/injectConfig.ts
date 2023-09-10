@@ -1,10 +1,8 @@
-import type { RuleSetUseItem, ModuleOptions } from "webpack";
-import type ConverterBase from "./converters/ConverterBase";
-import modifyCssLoader from "./modifyCssLoader";
+import type { RuleSetUseItem, ModuleOptions } from 'webpack';
+import modifyCssLoader from './modifyCssLoader';
 
-const injectConverter = (converter: ConverterBase, rules?: ModuleOptions['rules']) => {
+const injectConfig = (config: {[key: string]: unknown}, rules?: ModuleOptions['rules']) => {
     if (!rules) return;
-    const getLocalIdent = converter.getLocalIdent.bind(converter)
 
     const oneOfRule = rules?.find(
         (rule) => typeof rule === 'object' && typeof rule?.oneOf === 'object'
@@ -21,7 +19,7 @@ const injectConverter = (converter: ConverterBase, rules?: ModuleOptions['rules'
             if (rule && Array.isArray(rule.use)) {
                 rule.use.forEach((loaderObj) => {
                     if (loaderObj && testCssLoaderWithModules(loaderObj)) {
-                        modifyCssLoader(getLocalIdent, loaderObj);
+                        modifyCssLoader(config, loaderObj);
                     }
                 });
             }
@@ -29,4 +27,4 @@ const injectConverter = (converter: ConverterBase, rules?: ModuleOptions['rules'
     }
 }
 
-export default injectConverter;
+export default injectConfig;
