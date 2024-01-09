@@ -1,6 +1,6 @@
 {
   "name": "next-classnames-minifier",
-  "version": "1.1.4-canary.0",
+  "version": "2.0.0",
   "description": "Library for configuring style modules to generate compressed classes",
   "main": "dist/withClassnamesMinifier.js",
   "types": "dist/withClassnamesMinifier.d.ts",
@@ -35,11 +35,15 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "16.11.12",
+    "@types/uuid": "9.0.7",
     "@types/webpack": "5.28.0",
     "css-loader": "6.8.1",
     "typescript": "4.5.4"
   },
   "peerDependencies": {
     "css-loader": ">=4.0.0"
+  },
+  "dependencies": {
+    "uuid": "9.0.1"
   }
 }

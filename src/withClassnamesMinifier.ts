@@ -5,8 +5,9 @@ import { CUSTOM, MINIFIED, VALID_MINIFIERS_KEYS } from './lib/constants/minifier
 import ConverterMinified from './lib/converters/ConverterMinified';
 import ConverterCustom from './lib/converters/ConverterCustom';
 import injectConfig from './lib/injectConfig';
+import path from 'path';
 
-let getLocalIdent: ConverterBase['getLocalIdent'];
+let classnamesMinifier: ConverterBase;
 let infoMessageShown = false;
 
 const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any = {}) => ({
@@ -23,7 +24,7 @@ const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any 
                 process.kill(0);
                 process.exit();
             } else if (!isProd && minifierType === MINIFIED) {
-                console.log(`next-classnames-minifier. Do not use "minified" variant for dev mode. It's to unstable, use "detailed" or "none" instead`);
+                console.log(`next-classnames-minifier. It is not recommended to use "minified" mode in development mode, it may slow down the update`);
             } else if (minifierType === 'custom' && (typeof minifierConfig !== 'object' || !minifierConfig.templateString)) {
                 console.log(`next-classnames-minifier. Add templateString for custom minifier`);
                 process.kill(0);
@@ -31,21 +32,20 @@ const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any 
             }
             infoMessageShown = true;
         }
-
+        
         if (minifierType === MINIFIED) {
-            if (!getLocalIdent) {
-                const classnamesMinifier = new ConverterMinified();
-                getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
+            if (!classnamesMinifier) {
+                const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
+                classnamesMinifier = new ConverterMinified(cacheDir);
             }
 
-            injectConfig({ getLocalIdent }, config.module?.rules);
+            injectConfig({ classnamesMinifier }, config.module?.rules);
         } else if (minifierType === CUSTOM && typeof minifierConfig === 'object' && minifierConfig.templateString) {
-            if (!getLocalIdent) {
-                const classnamesMinifier = new ConverterCustom();
-                getLocalIdent = classnamesMinifier.getLocalIdent.bind(classnamesMinifier);
+            if (!classnamesMinifier) {
+                classnamesMinifier = new ConverterCustom();
             }
 
-            injectConfig({ localIdentName: minifierConfig.templateString, getLocalIdent }, config.module?.rules);
+            injectConfig({ localIdentName: minifierConfig.templateString, classnamesMinifier }, config.module?.rules);
         }
 
         if (typeof nextConfig.webpack === 'function') {
