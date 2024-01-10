@@ -37,7 +37,7 @@
     "@types/node": "16.11.12",
     "@types/uuid": "9.0.7",
     "@types/webpack": "5.28.0",
-    "css-loader": "6.8.1",
+    "css-loader": "6.9.0",
     "typescript": "4.5.4"
   },
   "peerDependencies": {
