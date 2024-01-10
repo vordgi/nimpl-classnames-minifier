@@ -122,7 +122,7 @@ class ConverterMinified implements ConverterBase {
 
     let minifiedClassName;
     if (this.freeClasses.length) {
-      minifiedClassName = this.freeClasses[0];
+      minifiedClassName = this.freeClasses.shift() as string;
     } else {
       minifiedClassName = this.getClassName();
     }
