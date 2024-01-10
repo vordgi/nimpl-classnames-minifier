@@ -41,7 +41,7 @@ class ConverterMinified implements ConverterBase {
 
     const cachedFiles = readdirSync(cacheDir);
     if (cachedFiles.length) {
-      console.log('Restore classnames from cache...');
+      console.log('next-classnames-minifier: Restoring pairs of classes...');
     }
 
     const usedClassNames: string[] = [];
@@ -83,7 +83,7 @@ class ConverterMinified implements ConverterBase {
     }
 
     if (cachedFiles.length) {
-      console.log('Сlassnames restored');
+      console.log('next-classnames-minifier: Pairs restored');
     }
 
     this.dirtyСache = dirtyСache;
