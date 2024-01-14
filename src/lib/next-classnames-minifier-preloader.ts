@@ -1,7 +1,7 @@
 import type { LoaderContext } from 'webpack';
 import ConverterMinified from './converters/ConverterMinified';
 
-export default function (this: LoaderContext<any>, source: string) {
+export default function (this: LoaderContext<any>, source: string, map: any, meta: any) {
   const options = this.getOptions();
   const classnamesMinifier = options.classnamesMinifier as ConverterMinified;
   const maybeClassesList = source.match(/\.[a-zA-Z_][a-zA-Z0-9_-]+/g)
@@ -13,5 +13,6 @@ export default function (this: LoaderContext<any>, source: string) {
     ) : {};
   }
 
-  return source;
+  this.callback(null, source, map, meta);
+  return;
 }
