@@ -15,6 +15,8 @@ type CacheType = {
 class ConverterMinified implements ConverterBase {
   cacheDir: string;
 
+  prefix: string;
+
   cache = {};
 
   dirtyСache: CacheType = {};
@@ -35,8 +37,9 @@ class ConverterMinified implements ConverterBase {
 
   nameMap = [0];
 
-  constructor(cacheDir: string) {
+  constructor(cacheDir: string, prefix: string = '') {
     this.cacheDir = cacheDir;
+    this.prefix = prefix;
     if (!existsSync(cacheDir)) mkdirSync(cacheDir, { recursive: true });
 
     const cachedFiles = readdirSync(cacheDir);
@@ -98,7 +101,7 @@ class ConverterMinified implements ConverterBase {
       this.currentLoopLength += 1
     }
 
-    const currentClassname = this.nameMap.map((e) => this.symbols[e]).join('');
+    const currentClassname = this.prefix + this.nameMap.map((e) => this.symbols[e]).join('');
 
     for (let i = this.currentLoopLength; i >= 0; i--) {
       if (this.nameMap[i] === symbolsCount - 1 || (i === 0 && this.nameMap[i] === 25)) {

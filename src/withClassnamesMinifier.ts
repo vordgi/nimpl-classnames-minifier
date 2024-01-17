@@ -16,18 +16,18 @@ const withClassnameMinifier = (pluginOptions: Config = {}) => {
     return (nextConfig: any = {}) => ({
         ...nextConfig,
         webpack: (config: Configuration, options: any) => {
-            const { type = MINIFIED, templateString } = pluginOptions;
+            const { type = MINIFIED, templateString, prefix } = pluginOptions;
 
             if (type === MINIFIED) {
                 if (!classnamesMinifier) {
                     const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
-                    classnamesMinifier = new ConverterMinified(cacheDir);
+                    classnamesMinifier = new ConverterMinified(cacheDir, prefix);
                 }
 
                 injectConfig({ classnamesMinifier }, config.module?.rules);
             } else if (type === CUSTOM && templateString) {
                 if (!classnamesMinifier) {
-                    classnamesMinifier = new ConverterCustom();
+                    classnamesMinifier = new ConverterCustom(prefix);
                 }
 
                 injectConfig({ localIdentName: templateString, classnamesMinifier }, config.module?.rules);
