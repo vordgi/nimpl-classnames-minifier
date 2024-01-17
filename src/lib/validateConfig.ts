@@ -1,11 +1,7 @@
+import type { Config } from "./types/plugin";
 import { CUSTOM, VALID_MINIFIERS_KEYS } from "./constants/minifiers";
 
-type Config = {
-    type?: (typeof VALID_MINIFIERS_KEYS)[number];
-    templateString?: string;
-}
-
-const validKeys = ['type', 'templateString'];
+const validKeys = ['type', 'templateString', 'prefix'];
 
 const validateIsObject = (config: unknown): config is Config => {
     if (!config) return false;
@@ -35,6 +31,11 @@ const validateConfig = (config: unknown = {}): Config => {
 
     if (config.type === CUSTOM && !config.templateString) {
         console.error('next-classnames-minifier: Invalid configuration. The templateString option is required for the "custom" type. See https://github.com/vordgi/next-classnames-minifier#configuration')
+        process.exit();
+    }
+
+    if (config.prefix && !config.prefix.match(/^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$/)) {
+        console.error(`next-classnames-minifier: Invalid prefix. It should match following rule: "^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$". See https://github.com/vordgi/next-classnames-minifier#configuration`);
         process.exit();
     }
 
