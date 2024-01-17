@@ -1,59 +1,45 @@
 import type { Configuration } from 'webpack/types';
-import type { Options } from './lib/types/plugin';
+import type { Config } from './lib/types/plugin';
 import type ConverterBase from './lib/converters/ConverterBase';
-import { CUSTOM, MINIFIED, VALID_MINIFIERS_KEYS } from './lib/constants/minifiers';
+import { CUSTOM, MINIFIED } from './lib/constants/minifiers';
 import ConverterMinified from './lib/converters/ConverterMinified';
 import ConverterCustom from './lib/converters/ConverterCustom';
 import injectConfig from './lib/injectConfig';
+import validateConfig from './lib/validateConfig';
 import path from 'path';
 
 let classnamesMinifier: ConverterBase;
-let infoMessageShown = false;
 
-const withClassnameMinifier = (pluginOptions: Options = {}) => (nextConfig: any = {}) => ({
-    ...nextConfig,
-    webpack: (config: Configuration, options: any) => {
-        const { dev = 'none', prod = 'minified' } = pluginOptions;
-        const isProd = process.env.NODE_ENV === 'production';
-        const minifierConfig = isProd ? prod : dev;
-        const minifierType = typeof minifierConfig === 'string' ? minifierConfig : minifierConfig.type;
+const withClassnameMinifier = (pluginOptions: Config = {}) => {
+    validateConfig(pluginOptions);
 
-        if (!infoMessageShown) {
-            if (!VALID_MINIFIERS_KEYS.includes(minifierType)) {
-                console.log(`next-classnames-minifier. Invalid key for target env: ${minifierType}, valid keys are: ${VALID_MINIFIERS_KEYS.join(', ')}`);
-                process.kill(0);
-                process.exit();
-            } else if (!isProd && minifierType === MINIFIED) {
-                console.log(`next-classnames-minifier. It is not recommended to use "minified" mode in development mode, it may slow down the update`);
-            } else if (minifierType === 'custom' && (typeof minifierConfig !== 'object' || !minifierConfig.templateString)) {
-                console.log(`next-classnames-minifier. Add templateString for custom minifier`);
-                process.kill(0);
-                process.exit();
-            }
-            infoMessageShown = true;
-        }
-        
-        if (minifierType === MINIFIED) {
-            if (!classnamesMinifier) {
-                const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
-                classnamesMinifier = new ConverterMinified(cacheDir);
+    return (nextConfig: any = {}) => ({
+        ...nextConfig,
+        webpack: (config: Configuration, options: any) => {
+            const { type = MINIFIED, templateString } = pluginOptions;
+
+            if (type === MINIFIED) {
+                if (!classnamesMinifier) {
+                    const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
+                    classnamesMinifier = new ConverterMinified(cacheDir);
+                }
+
+                injectConfig({ classnamesMinifier }, config.module?.rules);
+            } else if (type === CUSTOM && templateString) {
+                if (!classnamesMinifier) {
+                    classnamesMinifier = new ConverterCustom();
+                }
+
+                injectConfig({ localIdentName: templateString, classnamesMinifier }, config.module?.rules);
             }
 
-            injectConfig({ classnamesMinifier }, config.module?.rules);
-        } else if (minifierType === CUSTOM && typeof minifierConfig === 'object' && minifierConfig.templateString) {
-            if (!classnamesMinifier) {
-                classnamesMinifier = new ConverterCustom();
+            if (typeof nextConfig.webpack === 'function') {
+                return nextConfig.webpack(config, options);
             }
 
-            injectConfig({ localIdentName: minifierConfig.templateString, classnamesMinifier }, config.module?.rules);
+            return config;
         }
-
-        if (typeof nextConfig.webpack === 'function') {
-            return nextConfig.webpack(config, options);
-        }
-
-        return config;
-	}
-});
+    })
+};
 
 export default withClassnameMinifier;
