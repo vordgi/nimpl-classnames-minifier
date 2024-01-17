@@ -47,13 +47,21 @@ module.exports = withPlugins([
 
 ## Configuration
 
+### Options
+
+* `type` - variant of changing classnames method;
+* `templateString` - custom [template string](https://webpack.js.org/configuration/output/#template-strings), only works with "custom" type;
+* `prefix` - custom prefix that will be added to each updated class;
+
+### Type
+
 next-classname-minifier has 3 types of changing classnames:
 
 * minified — the main option. It is not recommended to use this option in development mode, it may slow down the update;
 * custom — create a class using a [template string](https://webpack.js.org/configuration/output/#template-strings) rule, can be used for debugging;
 * none — use the default CSS modules option, default for development mode;
 
-You can choose different options for development and production. 
+*It is recommended to disable minification for development.*
 
 Configuration example:
 ```js
