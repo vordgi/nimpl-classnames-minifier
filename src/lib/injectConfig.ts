@@ -18,13 +18,25 @@ const injectConfig = (config: InjectConfig, rules?: ModuleOptions['rules']) => {
             typeof loaderObj.options === 'object' &&
             loaderObj.options.modules
         );
+        const testFontLoader = (loaderObj: RuleSetUseItem) => (
+            typeof loaderObj === 'object' &&
+            loaderObj?.loader?.match('next-font-loader')
+        );
         oneOfRule.oneOf?.forEach(rule => {
             if (rule && Array.isArray(rule.use)) {
                 let cssLoaderIndex = null as null | number;
-                for (let i = 0; i <= rule.use.length - 1; i++) {
+                for (let i = rule.use.length - 1; i >= 0; i--) {
                     const loaderObj = rule.use[i];
 
-                    if (loaderObj && testCssLoaderWithModules(loaderObj)) {
+                    if (!loaderObj) continue;
+
+                    /**
+                     * Next.js has special logic for generating font classes,
+                     * so we don't change the rules that work with fonts and, as a result, do not minify font classes
+                     */
+                    if (testFontLoader(loaderObj)) break;
+
+                    if (testCssLoaderWithModules(loaderObj)) {
                         cssLoaderIndex = i;
                         modifyCssLoader(config, loaderObj);
                     }
@@ -43,8 +55,7 @@ const injectConfig = (config: InjectConfig, rules?: ModuleOptions['rules']) => {
                         options: {
                             classnamesMinifier: config.classnamesMinifier,
                         },
-                    }
-                    )
+                    })
                 }
             }
         });
