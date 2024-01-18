@@ -16,12 +16,12 @@ const withClassnameMinifier = (pluginOptions: Config = {}) => {
     return (nextConfig: any = {}) => ({
         ...nextConfig,
         webpack: (config: Configuration, options: any) => {
-            const { type = MINIFIED, templateString, prefix } = pluginOptions;
+            const { type = MINIFIED, templateString, prefix, reservedNames } = pluginOptions;
 
             if (type === MINIFIED) {
                 if (!classnamesMinifier) {
                     const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
-                    classnamesMinifier = new ConverterMinified(cacheDir, prefix);
+                    classnamesMinifier = new ConverterMinified(cacheDir, prefix, reservedNames);
                 }
 
                 injectConfig({ classnamesMinifier }, config.module?.rules);
