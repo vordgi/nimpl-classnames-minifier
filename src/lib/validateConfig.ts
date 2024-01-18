@@ -1,7 +1,7 @@
 import type { Config } from "./types/plugin";
 import { CUSTOM, VALID_MINIFIERS_KEYS } from "./constants/minifiers";
 
-const validKeys = ['type', 'templateString', 'prefix'];
+const validKeys = ['type', 'templateString', 'prefix', 'reservedNames'];
 
 const validateIsObject = (config: unknown): config is Config => {
     if (!config) return false;

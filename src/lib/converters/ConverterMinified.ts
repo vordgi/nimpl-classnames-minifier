@@ -17,6 +17,8 @@ class ConverterMinified implements ConverterBase {
 
   prefix: string;
 
+  reservedNames: string[];
+
   cache = {};
 
   dirtyСache: CacheType = {};
@@ -37,9 +39,10 @@ class ConverterMinified implements ConverterBase {
 
   nameMap = [0];
 
-  constructor(cacheDir: string, prefix: string = '') {
+  constructor(cacheDir: string, prefix: string = '', reservedNames: string[] = []) {
     this.cacheDir = cacheDir;
     this.prefix = prefix;
+    this.reservedNames = reservedNames;
     if (!existsSync(cacheDir)) mkdirSync(cacheDir, { recursive: true });
 
     const cachedFiles = readdirSync(cacheDir);
@@ -73,14 +76,14 @@ class ConverterMinified implements ConverterBase {
 
     let unfoundClassNamesLength = usedClassNames.length;
     while (unfoundClassNamesLength > 0) {
-      const newClass = this.getClassName();
+      const newClass = this.generateClassName();
       this.lastIndex += 1;
       const usedClassNameIndex = usedClassNames.indexOf(newClass);
 
       if (usedClassNameIndex !== -1) {
         unfoundClassNamesLength -= 1;
         usedClassNames.splice(usedClassNameIndex, 1);
-      } else {
+      } else if (!this.reservedNames.includes(newClass)) {
         this.freeClasses.push(newClass);
       }
     }
@@ -92,7 +95,7 @@ class ConverterMinified implements ConverterBase {
     this.dirtyСache = dirtyСache;
   }
 
-  getClassName() {
+  generateClassName() {
     const symbolsCount = 62;
     if (this.lastIndex >= this.nextLoopEndsWith) {
       if (this.nextLoopEndsWith === 26) this.nextLoopEndsWith = 62 * symbolsCount;
@@ -115,6 +118,21 @@ class ConverterMinified implements ConverterBase {
     return currentClassname;
   }
 
+  getTargetClassName() {
+    let targetClassName: string;
+    if (this.freeClasses.length) {
+      targetClassName = this.freeClasses.shift() as string;
+    } else {
+      targetClassName = this.generateClassName();
+    }
+
+    while (this.reservedNames.includes(targetClassName)) {
+      targetClassName = this.getTargetClassName();
+    }
+
+    return targetClassName;
+  }
+
   getLocalIdent({ resourcePath }: LoaderContext<any>, _localIdent: string, origName: string) {
     if (!this.dirtyСache[resourcePath]) this.dirtyСache[resourcePath] = {
       cachePath: path.join(this.cacheDir, uuidv4()), matchings: {}, type: 'new',
@@ -123,16 +141,11 @@ class ConverterMinified implements ConverterBase {
 
     if (currentCache.matchings[origName]) return currentCache.matchings[origName];
 
-    let minifiedClassName;
-    if (this.freeClasses.length) {
-      minifiedClassName = this.freeClasses.shift() as string;
-    } else {
-      minifiedClassName = this.getClassName();
-    }
-    currentCache.matchings[origName] = minifiedClassName;
+    let targetClassName = this.getTargetClassName();
+    currentCache.matchings[origName] = targetClassName;
     currentCache.type = 'updated';
     this.lastIndex += 1;
-    return minifiedClassName;
+    return targetClassName;
   }
 };
 
