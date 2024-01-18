@@ -52,6 +52,7 @@ module.exports = withPlugins([
 * `type` - variant of changing classnames method;
 * `templateString` - custom [template string](https://webpack.js.org/configuration/output/#template-strings), only works with "custom" type;
 * `prefix` - custom prefix that will be added to each updated class;
+* `reservedNames` - array of reserved names that should not be used by this package (must include prefix);
 
 ### Type
 
