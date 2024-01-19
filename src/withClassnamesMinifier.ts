@@ -7,11 +7,16 @@ import ConverterCustom from './lib/converters/ConverterCustom';
 import injectConfig from './lib/injectConfig';
 import validateConfig from './lib/validateConfig';
 import path from 'path';
+import validateDist from './lib/validateDist';
 
 let classnamesMinifier: ConverterBase;
 
+const nextDistDir = path.join(process.cwd(), '.next');
+const cacheDir = path.join(nextDistDir, 'cache/ncm');
+
 const withClassnameMinifier = (pluginOptions: Config = {}) => {
     validateConfig(pluginOptions);
+    validateDist(pluginOptions, nextDistDir);
 
     return (nextConfig: any = {}) => ({
         ...nextConfig,
@@ -20,7 +25,6 @@ const withClassnameMinifier = (pluginOptions: Config = {}) => {
 
             if (type === MINIFIED) {
                 if (!classnamesMinifier) {
-                    const cacheDir = path.join(process.cwd(), '.next/cache/ncm');
                     classnamesMinifier = new ConverterMinified(cacheDir, prefix, reservedNames);
                 }
 
