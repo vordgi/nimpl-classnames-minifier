@@ -61,7 +61,9 @@ class ConverterMinified implements ConverterBase {
         const cachedMatchings = classnames.reduce<{[orig: string]: string}>((acc, cur) => {
           const [origClass, newClass] = cur.split('=');
           acc[origClass] = newClass;
-          usedClassNames.push(newClass);
+          if (!usedClassNames.includes(newClass)) {
+            usedClassNames.push(newClass);
+          }
           return acc;
         }, {});
         dirtyСache[resourcePath] = {
@@ -118,7 +120,7 @@ class ConverterMinified implements ConverterBase {
     return currentClassname;
   }
 
-  getTargetClassName() {
+  getTargetClassName(origName: string) {
     let targetClassName: string;
     if (this.freeClasses.length) {
       targetClassName = this.freeClasses.shift() as string;
@@ -126,8 +128,9 @@ class ConverterMinified implements ConverterBase {
       targetClassName = this.generateClassName();
     }
 
-    while (this.reservedNames.includes(targetClassName)) {
-      targetClassName = this.getTargetClassName();
+    if (this.reservedNames.includes(targetClassName)) {
+      targetClassName = this.getTargetClassName(origName);
+      this.lastIndex += 1;
     }
 
     return targetClassName;
@@ -141,7 +144,7 @@ class ConverterMinified implements ConverterBase {
 
     if (currentCache.matchings[origName]) return currentCache.matchings[origName];
 
-    let targetClassName = this.getTargetClassName();
+    let targetClassName = this.getTargetClassName(origName);
     currentCache.matchings[origName] = targetClassName;
     currentCache.type = 'updated';
     this.lastIndex += 1;
