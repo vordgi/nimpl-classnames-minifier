@@ -55,7 +55,8 @@ class ConverterMinified implements ConverterBase {
     const dirtyСache: CacheType = {};
     let prevLastIndex = 0;
     cachedFiles.forEach((file) => {
-      const dirtyCacheFile = readFileSync(path.join(cacheDir, file), { encoding: 'utf8' });
+      const filePath = path.join(cacheDir, file);
+      const dirtyCacheFile = readFileSync(filePath, { encoding: 'utf8' });
       const [resourcePath, lastIndex, ...classnames] = dirtyCacheFile.split(',');
       if (lastIndex && +lastIndex > prevLastIndex) prevLastIndex = +lastIndex;
 
@@ -74,7 +75,7 @@ class ConverterMinified implements ConverterBase {
           type: 'old',
         }
       } else {
-        rmSync(resourcePath);
+        rmSync(filePath);
       }
     });
 
