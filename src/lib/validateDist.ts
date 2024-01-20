@@ -35,6 +35,7 @@ const validateDist = (pluginOptions: Config, nextDistDir: string) => {
     if (isImpreciseDist) {
         console.log('next-classnames-minifier: Changes found in package configuration. Cleaning the dist folder...')
         fs.rmSync(nextDistDir, { recursive: true, force: true });
+        console.log('next-classnames-minifier: Changes found in package configuration. Dist folder cleared')
     }
     if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir, { recursive: true });
     fs.writeFileSync(manifestPath, JSON.stringify({ ...pluginOptions, version: CODE_VERSION }), { encoding: 'utf-8' });
