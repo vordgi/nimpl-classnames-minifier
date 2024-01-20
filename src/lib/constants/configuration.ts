@@ -3,4 +3,4 @@
  * and minifying the previous version is not compatible with the current one,
  * which would mean that we should clean dist folder
  */
-export const CODE_VERSION = 'toukan';
+export const CODE_VERSION = 'rabbit';

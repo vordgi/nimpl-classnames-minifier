@@ -7,7 +7,7 @@ export default function (this: LoaderContext<any>, source: string, map: any, met
   const classnamesMinifier = options.classnamesMinifier as ConverterMinified;
   Object.entries(classnamesMinifier.dirtyСache).forEach(([resourcePath, data]) => {
     if (data.type !== 'old') {
-      fs.writeFileSync(data.cachePath, `${resourcePath},${Object.entries(data.matchings).map(
+      fs.writeFileSync(data.cachePath, `${resourcePath},${classnamesMinifier.lastIndex},${Object.entries(data.matchings).map(
         ([key, value]) => (`${key}=${value}`)
       ).join(',')}`)
     }
