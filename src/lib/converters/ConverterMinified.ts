@@ -53,9 +53,11 @@ class ConverterMinified implements ConverterBase {
     const usedClassNames: string[] = [];
 
     const dirtyСache: CacheType = {};
+    let prevLastIndex = 0;
     cachedFiles.forEach((file) => {
       const dirtyCacheFile = readFileSync(path.join(cacheDir, file), { encoding: 'utf8' });
-      const [resourcePath, ...classnames] = dirtyCacheFile.split(',');
+      const [resourcePath, lastIndex, ...classnames] = dirtyCacheFile.split(',');
+      if (lastIndex && +lastIndex > prevLastIndex) prevLastIndex = +lastIndex;
 
       if (existsSync(resourcePath)) {
         const cachedMatchings = classnames.reduce<{[orig: string]: string}>((acc, cur) => {
@@ -77,7 +79,7 @@ class ConverterMinified implements ConverterBase {
     });
 
     let unfoundClassNamesLength = usedClassNames.length;
-    while (unfoundClassNamesLength > 0) {
+    for (let i = 0; i <= prevLastIndex; i++) {
       const newClass = this.generateClassName();
       this.lastIndex += 1;
       const usedClassNameIndex = usedClassNames.indexOf(newClass);
