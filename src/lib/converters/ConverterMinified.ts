@@ -70,7 +70,7 @@ class ConverterMinified implements ConverterBase {
           return acc;
         }, {});
         dirtyСache[resourcePath] = {
-          cachePath: file,
+          cachePath: filePath,
           matchings: cachedMatchings,
           type: 'old',
         }
