@@ -24,16 +24,13 @@ jobs:
 
       - name: Publish on main
         if: "!contains(github.ref_name, 'canary')"
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-      - name: Update version on canary
-        if: contains(github.ref_name, 'canary')
-        run: npm version --no-git-tag-version ${{github.ref_name}}
+        run: |
+          npm set //registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}
+          npm publish --access public
 
       - name: Publish on canary
         if: contains(github.ref_name, 'canary')
-        run: npm publish --tag canary
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: |
+          npm set //registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}
+          npm version --no-git-tag-version ${{github.ref_name}}
+          npm publish --tag canary --access public
