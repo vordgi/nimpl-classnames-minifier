@@ -1,46 +1,33 @@
 import type { Configuration } from 'webpack/types';
-import type { Config } from './lib/types/plugin';
-import type ConverterBase from './lib/converters/ConverterBase';
-import { CUSTOM, MINIFIED } from './lib/constants/minifiers';
-import ConverterMinified from './lib/converters/ConverterMinified';
-import ConverterCustom from './lib/converters/ConverterCustom';
+import type { Config } from 'classnames-minifier/dist/lib/types/plugin';
+import ClassnamesMinifier from 'classnames-minifier';
 import injectConfig from './lib/injectConfig';
-import validateConfig from './lib/validateConfig';
 import path from 'path';
-import validateDist from './lib/validateDist';
 
-let classnamesMinifier: ConverterBase;
-let cacheDir: string;
+type PluginOptions = Omit<Config, 'cacheDir' | 'distDir'> & { disabled?: boolean };
 
-const withClassnameMinifier = (pluginOptions: Config = {}) => {
-    validateConfig(pluginOptions);
+let classnamesMinifier: ClassnamesMinifier;
 
+const withClassnameMinifier = (pluginOptions: PluginOptions = {}) => {
     return (nextConfig: any = {}) => {
-        if (!cacheDir) {
+        if (pluginOptions.disabled) return nextConfig;
+
+        if (!classnamesMinifier) {
             const distDir = nextConfig?.distDir || '.next'
             const distDirAbsolute = path.join(process.cwd(), distDir);
-            cacheDir = path.join(distDirAbsolute, 'cache/ncm');
-            validateDist(pluginOptions, distDirAbsolute);
+            const cacheDir = path.join(distDirAbsolute, 'cache/ncm');
+            classnamesMinifier = new ClassnamesMinifier({
+                prefix: pluginOptions.prefix,
+                reservedNames: pluginOptions.reservedNames,
+                distDir: distDirAbsolute,
+                cacheDir,
+            });
         }
 
         return ({
             ...nextConfig,
             webpack: (config: Configuration, options: any) => {
-                const { type = MINIFIED, templateString, prefix, reservedNames } = pluginOptions;
-
-                if (type === MINIFIED) {
-                    if (!classnamesMinifier) {
-                        classnamesMinifier = new ConverterMinified(cacheDir, prefix, reservedNames);
-                    }
-
-                    injectConfig({ classnamesMinifier }, config.module?.rules);
-                } else if (type === CUSTOM && templateString) {
-                    if (!classnamesMinifier) {
-                        classnamesMinifier = new ConverterCustom(prefix);
-                    }
-
-                    injectConfig({ localIdentName: templateString, classnamesMinifier }, config.module?.rules);
-                }
+                injectConfig({ classnamesMinifier }, config.module?.rules);
 
                 if (typeof nextConfig.webpack === 'function') {
                     return nextConfig.webpack(config, options);
