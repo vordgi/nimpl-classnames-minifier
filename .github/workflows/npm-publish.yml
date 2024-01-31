@@ -23,13 +23,13 @@ jobs:
           npm run build
 
       - name: Publish on main
-        if: github.ref == 'refs/heads/main'
+        if: "!contains(github.ref_name, 'canary')"
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: Publish on canary
-        if: github.ref == 'refs/heads/canary'
+        if: contains(github.ref_name, 'canary')
         run: /
           npm version ${{github.ref_name}}
           npm publish --tag canary
