@@ -31,7 +31,7 @@ jobs:
       - name: Publish on canary
         if: contains(github.ref_name, 'canary')
         run: |
-          npm version ${{github.ref_name}}
+          npm version --no-git-tag-version ${{github.ref_name}}
           npm publish --tag canary
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
