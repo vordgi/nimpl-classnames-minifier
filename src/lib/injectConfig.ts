@@ -1,8 +1,10 @@
 import type { RuleSetUseItem, ModuleOptions } from 'webpack';
-import modifyCssLoader from './modifyCssLoader';
-import path from 'path';
-import { InjectConfig } from './types/plugin';
-import ConverterMinified from './converters/ConverterMinified';
+import type ClassnamesMinifier from 'classnames-minifier';
+
+export type InjectConfig = {
+    localIdentName?: string;
+    classnamesMinifier: ClassnamesMinifier;
+}
 
 const injectConfig = (config: InjectConfig, rules?: ModuleOptions['rules']) => {
     if (!rules) return;
@@ -37,25 +39,20 @@ const injectConfig = (config: InjectConfig, rules?: ModuleOptions['rules']) => {
                     if (testFontLoader(loaderObj)) break;
 
                     if (testCssLoaderWithModules(loaderObj)) {
+                        if (typeof loaderObj !== 'object' || typeof loaderObj.options !== 'object') continue;
                         cssLoaderIndex = i;
-                        modifyCssLoader(config, loaderObj);
+                        loaderObj.options.modules.getLocalIdent = config.classnamesMinifier.getLocalIdent;
                     }
                 }
 
-                if (cssLoaderIndex !== null && config.classnamesMinifier instanceof ConverterMinified) {
-                    rule.use.splice(cssLoaderIndex, 1, {
-                        loader: path.join(__dirname, './next-classnames-minifier-postloader.js'),
-                        options: {
-                            classnamesMinifier: config.classnamesMinifier,
-                        },
-                    }, 
-                    rule.use[cssLoaderIndex],
-                    {
-                        loader: path.join(__dirname, './next-classnames-minifier-preloader.js'),
-                        options: {
-                            classnamesMinifier: config.classnamesMinifier,
-                        },
-                    })
+                if (cssLoaderIndex !== null) {
+                    rule.use.splice(
+                        cssLoaderIndex,
+                        1,
+                        config.classnamesMinifier.postLoader,
+                        rule.use[cssLoaderIndex],
+                        config.classnamesMinifier.preLoader
+                    )
                 }
             }
         });
