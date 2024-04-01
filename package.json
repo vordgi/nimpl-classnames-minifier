@@ -1,5 +1,5 @@
 {
-  "name": "next-classnames-minifier",
+  "name": "@nimpl/classnames-minifier",
   "version": "3.0.0",
   "description": "Library for configuring style modules to generate compressed classes",
   "main": "dist/withClassnamesMinifier.js",
@@ -25,7 +25,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/vordgi/next-classnames-minifier.git"
+    "url": "git://github.com/vordgi/nimpl-classnames-minifier.git"
   },
   "author": {
     "name": "Savelyev Alexander",
