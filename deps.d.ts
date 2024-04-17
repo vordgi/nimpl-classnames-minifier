@@ -1,1 +1,1 @@
-declare module 'css-loader/dist/utils';
+declare module "css-loader/dist/utils";
