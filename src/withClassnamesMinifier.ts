@@ -1,4 +1,4 @@
-import type { Configuration } from 'webpack/types';
+import type { Configuration } from 'webpack';
 import type { Config } from 'classnames-minifier/dist/lib/types/plugin';
 import ClassnamesMinifier from 'classnames-minifier';
 import injectConfig from './lib/injectConfig';
