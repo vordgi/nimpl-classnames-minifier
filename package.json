@@ -54,7 +54,7 @@
     "css-loader": ">=4.0.0"
   },
   "dependencies": {
-    "classnames-minifier": "0.1.1",
+    "classnames-minifier": "0.1.3",
     "uuid": "9.0.1"
   }
 }
