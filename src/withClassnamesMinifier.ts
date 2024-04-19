@@ -20,6 +20,7 @@ const withClassnameMinifier = (pluginOptions: PluginOptions = {}) => {
             classnamesMinifier = new ClassnamesMinifier({
                 prefix: pluginOptions.prefix,
                 reservedNames: pluginOptions.reservedNames,
+                disableDistDeletion: pluginOptions.disableDistDeletion,
                 distDir: distDirAbsolute,
                 cacheDir,
             });
