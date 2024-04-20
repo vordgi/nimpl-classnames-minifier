@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   classnames-minifier:
-    specifier: 0.1.4
-    version: 0.1.4(css-loader@6.9.0)
+    specifier: 0.1.5
+    version: 0.1.5(css-loader@6.9.0)
   uuid:
     specifier: 9.0.1
     version: 9.0.1
@@ -556,8 +556,8 @@ packages:
     resolution: {integrity: sha512-p3KULyQg4S7NIHixdwbGX+nFHkoBiA4YQmyWtjb8XngSKV124nJmRysgAeujbUVb15vh+RvFUfCPqU7rXk+hZg==}
     engines: {node: '>=6.0'}
 
-  /classnames-minifier@0.1.4(css-loader@6.9.0):
-    resolution: {integrity: sha512-P/6NVkofjNoppwhfNIyVSWl3C1+ZJnH+ImwqM8SmRCjHUdAxpJT1EskBaEy0X64/b6Iix/fUsZBoXTRXA2dzSw==}
+  /classnames-minifier@0.1.5(css-loader@6.9.0):
+    resolution: {integrity: sha512-+JEaH2EvsHsZaislIvHOheEJOwL/kvnL2KruksKNwLe3BU3IasZvAltEhuCEw6jpISuk+s+jtKWH1tZYkShw0Q==}
     peerDependencies:
       css-loader: '>=4.0.0'
     dependencies:
