@@ -1,6 +1,6 @@
 {
   "name": "@nimpl/classnames-minifier",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Library for configuring style modules to generate compressed classes",
   "main": "dist/withClassnamesMinifier.js",
   "types": "dist/withClassnamesMinifier.d.ts",
@@ -54,7 +54,7 @@
     "css-loader": ">=4.0.0"
   },
   "dependencies": {
-    "classnames-minifier": "0.1.5",
+    "classnames-minifier": "0.2.1",
     "uuid": "9.0.1"
   }
 }
