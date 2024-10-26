@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v3
@@ -26,12 +26,16 @@ jobs:
         run: |
           pnpm install
           pnpm run build
+          cp ../README.md .
+          cp ../LICENSE .
+        working-directory: ./package
 
       - name: Publish on main
         if: "!contains(github.ref_name, 'canary')"
         run: |
           npm set //registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}
           npm publish --access public
+        working-directory: ./package
 
       - name: Publish on canary
         if: contains(github.ref_name, 'canary')
@@ -39,3 +43,4 @@ jobs:
           npm set //registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}
           npm version --no-git-tag-version ${{github.ref_name}}
           npm publish --tag canary --access public
+        working-directory: ./package
