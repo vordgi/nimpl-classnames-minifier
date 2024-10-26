@@ -1,0 +1,50 @@
+{
+  "name": "@nimpl/classnames-minifier",
+  "version": "3.2.1",
+  "description": "Library for configuring style modules to generate compressed classes",
+  "main": "dist/withClassnamesMinifier.js",
+  "types": "dist/withClassnamesMinifier.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "next",
+    "next.js",
+    "classname",
+    "class",
+    "minify",
+    "compress",
+    "cut",
+    "css",
+    "sass",
+    "scss",
+    "modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vordgi/nimpl-classnames-minifier.git"
+  },
+  "author": {
+    "name": "Savelyev Alexander",
+    "email": "vordgi1@gmail.com",
+    "url": "https://github.com/vordgi/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "16.11.12",
+    "@types/uuid": "9.0.7",
+    "@types/webpack": "5.28.0",
+    "css-loader": "6.9.0",
+    "typescript": "4.5.4"
+  },
+  "peerDependencies": {
+    "css-loader": ">=4.0.0"
+  },
+  "dependencies": {
+    "classnames-minifier": "0.2.2",
+    "uuid": "9.0.1"
+  }
+}
