@@ -30,8 +30,8 @@ importers:
   package:
     dependencies:
       classnames-minifier:
-        specifier: 0.2.2
-        version: 0.2.2(css-loader@7.1.2(webpack@5.95.0))
+        specifier: 1.0.0
+        version: 1.0.0(css-loader@7.1.2(webpack@5.95.0))
       uuid:
         specifier: 10.0.0
         version: 10.0.0
@@ -330,8 +330,8 @@ packages:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
     engines: {node: '>=6.0'}
 
-  classnames-minifier@0.2.2:
-    resolution: {integrity: sha512-Eq8XZNdoqzT4O/UgvHWqwRdbOKLwofZiiCP4PtaHGkKJsIlyqYuBYala7YIeG9Qtv0fudlDn55dJKqF/XQFSUA==}
+  classnames-minifier@1.0.0:
+    resolution: {integrity: sha512-f+oH54ka5SGsY2PB30/ztd74xhPC395anKTszSrKouZx3YQd+EEtfmFIOtOsdhmKkN9vCiuAvTEV78kdUUkVww==}
     peerDependencies:
       css-loader: '>=4.0.0'
 
@@ -1250,7 +1250,7 @@ snapshots:
 
   chrome-trace-event@1.0.4: {}
 
-  classnames-minifier@0.2.2(css-loader@7.1.2(webpack@5.95.0)):
+  classnames-minifier@1.0.0(css-loader@7.1.2(webpack@5.95.0)):
     dependencies:
       css-loader: 7.1.2(webpack@5.95.0)
       uuid: 9.0.1
