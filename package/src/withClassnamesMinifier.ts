@@ -2,10 +2,12 @@
 import type { Configuration } from "webpack";
 import type { Config } from "classnames-minifier/dist/lib/types/plugin";
 import ClassnamesMinifier from "classnames-minifier";
-import injectConfig from "./lib/injectConfig";
 import path from "path";
+import fs from "fs";
 
-type PluginOptions = Omit<Config, "cacheDir" | "distDir"> & { disabled?: boolean };
+import injectConfig from "./lib/injectConfig";
+
+type PluginOptions = Omit<Config, "cacheDir" | "distDir" | "checkDistFreshness"> & { disabled?: boolean };
 
 let classnamesMinifier: ClassnamesMinifier;
 
@@ -20,9 +22,12 @@ const withClassnameMinifier = (pluginOptions: PluginOptions = {}) => {
             classnamesMinifier = new ClassnamesMinifier({
                 prefix: pluginOptions.prefix,
                 reservedNames: pluginOptions.reservedNames,
-                disableDistDeletion: pluginOptions.disableDistDeletion,
+                distDeletionPolicy: pluginOptions.distDeletionPolicy,
                 experimental: pluginOptions.experimental,
                 distDir: distDirAbsolute,
+                checkDistFreshness: () => {
+                    return !fs.existsSync(".next/build-manifest.json");
+                },
                 cacheDir,
             });
         }
